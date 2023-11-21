@@ -1,0 +1,4 @@
+name = "TeXDown"
+uuid = "33d84725-ae62-4ead-88b6-b68952f0ad05"
+authors = ["John Golden <golden@lanl.gov>"]
+version = "0.1.0"
