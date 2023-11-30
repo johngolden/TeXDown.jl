@@ -17,6 +17,7 @@ function md_to_latex(str::String)
     parser = Parser()
     enable!(parser, DollarMathRule())
     enable!(parser, TableRule())
+    enable!(parser, RawContentRule())
     ast = parser(str)
     return latex(ast)
 end

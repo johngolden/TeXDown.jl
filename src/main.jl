@@ -1,18 +1,23 @@
 """
-    make_latex(md_file, template=identity)
+    make_latex(md_content, template=identity)
 
 Convert the contents of `md_file` into LaTeX.
 
 Optional: include a template function
 """
-function make_latex(md_file, template=identity)
-    # load the markdown file as a giant string
-    md_str = open(md_file, "r") do contents
-        read(contents, String)
+function make_latex(md_content, template=identity)
+
+    if isfile(md_content)
+        md_str = open(md_content, "r") do contents
+            read(contents, String)
+        end
+    else
+        md_str = md_content
     end
 
     # format the markdown string before parsing to latex
     md_str = add_newlines_to_equations(md_str)
+    md_str = add_empty_lines(md_str)
 
     # convert to latex
     tex_str = md_to_latex(md_str)
@@ -36,7 +41,28 @@ function make_latex(md_file, template=identity)
     # add preamble and ending
     tex_str = template(tex_str)
 
-    return tex_str
+    if isfile(md_content)
+        create_and_open_tex_file(md_content, tex_str)
+    else
+        return tex_str
+    end
+end
+
+function create_and_open_tex_file(md_filename::String, content::String)
+    if endswith(md_filename, ".md")
+        tex_filename = replace(md_filename, ".md" => ".tex")
+
+        open(tex_filename, "w") do file
+            write(file, content)
+        end
+
+        run(`open $(tex_filename)`)  # For macOS
+
+        return true
+    else
+        println("The provided filename does not end with '.md'")
+        return false
+    end
 end
 
 """
