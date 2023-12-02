@@ -1,13 +1,10 @@
 """
-    make_latex(md_content, template=identity)
+    make_latex_base(md_content)
 
-Convert the contents of `md_file` into LaTeX.
-
-Optional: include a template function
+Turn `md_content` -- either a Markdown file or string -- into LaTeX without a preamble.
 """
-function make_latex(md_content, template=identity)
-
-    if isfile(md_content)
+function make_tex(md_content; save=false)
+    if endswith(md_content, ".md")
         md_str = open(md_content, "r") do contents
             read(contents, String)
         end
@@ -17,10 +14,10 @@ function make_latex(md_content, template=identity)
 
     # format the markdown string before parsing to latex
     md_str = add_newlines_to_equations(md_str)
-    md_str = add_empty_lines(md_str)
+    md_str = add_empty_lines_to_lists(md_str)
 
     # convert to latex
-    tex_str = md_to_latex(md_str)
+    tex_str = md_to_tex(md_str)
 
     # fix CommonMark.jl bugs/shortcomings
     tex_str = fix_list_formatting(tex_str)
@@ -38,30 +35,46 @@ function make_latex(md_content, template=identity)
     tex_str = remove_double_empty_lines(tex_str)
     tex_str = add_indents(tex_str)
 
-    # add preamble and ending
-    tex_str = template(tex_str)
-
-    if isfile(md_content)
-        create_and_open_tex_file(md_content, tex_str)
+    if save
+        save_tex(md_content, tex_str)
     else
         return tex_str
     end
 end
 
-function create_and_open_tex_file(md_filename::String, content::String)
-    if endswith(md_filename, ".md")
-        tex_filename = replace(md_filename, ".md" => ".tex")
+"""
+    make_tex(md_content, template)
+
+Convert the contents of `md_content` into LaTeX with `template`.
+"""
+function make_tex(md_content, template; save=true)
+    println("hey")
+    tex_str = make_tex(md_content)
+    tex_str = template(tex_str)
+
+    if save
+        save_tex(md_content, tex_str)
+    else
+        return tex_str
+    end
+end
+
+"""
+    save_tex(md_content, tex_str)
+
+Save the TeX string to a file.
+
+Only works if `md_content` is Markdown file.
+"""
+function save_tex(md_content, tex_str)
+    if isfile(md_content)
+        tex_filename = replace(md_content, ".md" => ".tex")
 
         open(tex_filename, "w") do file
-            write(file, content)
+            write(file, tex_str)
         end
-
-        run(`open $(tex_filename)`)  # For macOS
-
-        return true
     else
-        println("The provided filename does not end with '.md'")
-        return false
+        return tex_str
     end
 end
 
@@ -75,12 +88,19 @@ The pdf is stored in the same location as `md_file`.
 """
 function make_pdf(md_file, template)
     make_tex(md_file, template)
-    filename = md_file[1:end-3]
-    cd(dirname(md_file))
+    filename, _ = splitext(md_file)
     run(`pdflatex $(filename).tex`)
+    delete_aux_files(filename)
+    run(`open $(filename).pdf`)
+end
+
+"""
+    delete_aux_files(filename)
+
+Delete auxiliary `pdflatex` files.
+"""
+function delete_aux_files(filename)
     run(`rm $(filename).log`)
     run(`rm $(filename).aux`)
-    run(`rm $(filename).out`)
     run(`rm $(filename).tex`)
-    run(`open $(filename).pdf`)
 end
