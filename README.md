@@ -7,7 +7,7 @@ TeXDown converts simple Markdown files into LaTeX, with optional preambles desig
 
 TeXDown is really just a fairly lightweight wrapper for [CommonMark.jl](https://github.com/MichaelHatherly/CommonMark.jl). The main additions are:
 
-* CommonMark still produces a handful of add LaTeX artifacts that TeXDown removes (e.g. `\par` at the end of each paragraph).
+* CommonMark still produces a handful of odd LaTeX artifacts that TeXDown removes (e.g. `\par` at the end of each paragraph).
 * Adds preambles for three of my common use cases: writing a research note, writing a todo list, and writing a recipe. 
 * Apple Shortcuts scripts to go directly from Markdown to PDF with a single keyboard shortcut.
 
