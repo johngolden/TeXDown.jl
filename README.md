@@ -67,7 +67,7 @@ In each case the resulting combined PDF is saved to the users Desktop under `pri
 
 These three options are all combined into a single shortcut:
 
-* [Combine Recipe PDFs](https://www.icloud.com/shortcuts/eca3563e1407489eb119ddf4c6faa13b)
+* [Combine recipe PDFs](https://www.icloud.com/shortcuts/eca3563e1407489eb119ddf4c6faa13b)
 
 
 
