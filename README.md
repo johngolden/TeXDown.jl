@@ -57,6 +57,7 @@ If you use one shortcut frequently, you can add a keyboard shortcut to activate 
 
 
 **Print Recipe PDFs**
+
 The `recipe` template defaults to 8.5" x 5.5" PDFs (meant to be printed out and affixed to a 5x8 index card). The following script prepares these PDFs for printing on a standard 8.5" x 11" piece of paper. This can be done in three ways:
 
 1. Take two recipes which each fit on a single 8.5" x 5.5" page and combine them into a single 8.5" x 11" page.
