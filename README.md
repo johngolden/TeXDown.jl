@@ -9,7 +9,7 @@ TeXDown is really just a fairly lightweight wrapper for [CommonMark.jl](https://
 
 * CommonMark still produces a handful of odd LaTeX artifacts that TeXDown removes (e.g. `\par` at the end of each paragraph).
 * Adds preambles for three of my common use cases: writing a research note, writing a todo list, and writing a recipe. 
-* Apple Shortcuts scripts to go directly from Markdown to PDF with a single keyboard shortcut.
+* Apple Shortcuts scripts to convert Markdown with a just a few clicks, avoiding having to open Julia or LaTeX directly.
 
 See the [examples](examples/) folder for more examples and technical descriptions of the capabilities.
 
@@ -38,7 +38,7 @@ brew install --cask mactex-no-gui
 ```
 
 ### Add shortcuts
-Note that most of these shortcuts assume you are using Julia 1.9 and will need to be modified for different versions.
+Note that most of these shortcuts assume you are using Julia 1.9.x and will need to be modified for different versions.
 
 Once you've downloaded these shortcuts, they can be used by right-clicking a Markdown file and scrolling down to "Quick Actions". Then click "Customize" and select the TeXDown shortcuts you wish to add to the menu. Once they are added they will appear in the "Quick Actions" menu. The output of the shortcut will be saved in the same folder as the Markdown file you're converting.
 
