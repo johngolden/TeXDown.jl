@@ -13,6 +13,24 @@ TeXDown is really just a fairly lightweight wrapper for [CommonMark.jl](https://
 
 See the [examples](examples/) folder for more examples and technical descriptions of the capabilities.
 
+## Usage
+
+```julia
+make_tex(md_content)
+```
+Turn `md_content` -- either a Markdown file or string -- into LaTeX without a preamble.
+
+```julia
+make_tex(md_content, template)
+```
+Convert the contents of `md_content` into LaTeX with `template`. Currently accepted options for `template` are `research_note`, `todo_list`, and `recipe`.
+
+```julia
+make_pdf(md_content, template)
+```
+Convert the contents of `md_content` into a PDF with `template`, and deletes all LaTeX auxiliary files. 
+
+
 ## Installation
 These instructions are for macOS only. TeXDown should work on Windows but I haven't tested it. 
 
