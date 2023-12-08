@@ -11,7 +11,7 @@ TeXDown is really just a fairly lightweight wrapper for [CommonMark.jl](https://
 * Adds preambles for three of my common use cases: writing a research note, writing a todo list, and writing a recipe. 
 * Apple Shortcuts scripts to convert Markdown with a just a few clicks, avoiding having to open Julia or LaTeX directly.
 
-See the [examples](examples/) folder for more examples and technical descriptions of the capabilities.
+The [examples](examples/) folder contains several simple examples which should give a good overview of the style, formatting, and capabilities of TeXDown.
 
 ## Installation
 These instructions are for macOS only. TeXDown should work on Windows but I haven't tested it. 
