@@ -8,7 +8,7 @@ include("extensions.jl")
 include("clean_latex.jl")
 
 include("templates.jl")
-export todo_list, research_note
+export todo_list, research_note, recipe
 
 include("main.jl")
 export make_tex, make_pdf

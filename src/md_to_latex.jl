@@ -28,7 +28,7 @@ will now render as two separate lists with a blank line between them.
 function add_empty_lines_to_lists(str::String)
     list = split(str, "\n")
 
-    newline = "\n\n`\\vspace{\\baselineskip}`{=latex}\n\n"
+    newline = "\n\n`\\vspace{-0.3cm}`{=latex}\n\n"
 
     for i in 2:length(list)-1
         # Check if the current element is an empty string

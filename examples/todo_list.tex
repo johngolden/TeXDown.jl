@@ -1,0 +1,80 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage{fancyhdr}
+\usepackage[hmargin=2cm,top=2.5cm,bottom=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{multicol}
+
+\usepackage{enumitem}
+\setlist[itemize]{topsep=0pt, partopsep=0pt, parsep=0pt, label=$\square$}
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\headrulewidth}{0pt}
+
+\pagestyle{fancy}
+\setlength\parindent{0in}
+\setlength\parskip{10pt}
+\setlength\headheight{50pt}
+\setstretch{.8}
+\setlength{\columnsep}{3em}
+\pagenumbering{gobble}
+\lhead{{\Huge \textbf{Todo List}} \quad{\LARGE Subtitle}}
+
+\begin{document}
+
+\begin{multicols*}{2}
+
+\subsection*{Header}
+\begin{itemize}
+    \item some
+    \item todo
+    \item items
+\end{itemize}
+
+\subsection*{Sublists}
+\begin{itemize}
+    \item you can also
+    \item do sublists
+    \begin{itemize}
+        \item like
+        \item this
+        \begin{itemize}
+            \item and
+            \item this
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Columns}
+\begin{itemize}
+    \item the default format
+    \item is two-column
+    \item you can force
+    \item a column break
+    \item by writing:
+    \item empty line, \texttt{---}, empty line
+\end{itemize}
+
+\vfill\null\columnbreak
+
+\subsection*{Breaking Up Lists}
+\begin{itemize}
+    \item you can split
+    \item up lists with
+\end{itemize}
+\vspace{-0.3cm}
+\begin{itemize}
+    \item a single newline
+    \item like this
+\end{itemize}
+You can also include non-list text like this.
+\begin{itemize}
+    \item and follow
+    \item it up with
+    \item another list
+\end{itemize}
+
+
+\end{multicols*}
+\end{document}

@@ -48,7 +48,6 @@ end
 Convert the contents of `md_content` into LaTeX with `template`.
 """
 function make_tex(md_content, template; save=true)
-    println("hey")
     tex_str = make_tex(md_content)
     tex_str = template(tex_str)
 
@@ -100,7 +99,9 @@ end
 Delete auxiliary `pdflatex` files.
 """
 function delete_aux_files(filename)
-    run(`rm $(filename).log`)
-    run(`rm $(filename).aux`)
-    run(`rm $(filename).tex`)
+    for ext in ["log", "aux", "out", "tex"]
+        if isfile("$filename.$ext")
+            run(`rm $filename.$ext`)
+        end
+    end
 end

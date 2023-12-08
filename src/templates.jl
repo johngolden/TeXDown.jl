@@ -84,6 +84,7 @@ function research_note(str::String)
                 \\usepackage{braket}
                 \\usepackage{float}
                 \\usepackage{longtable}
+                \\usepackage{listings}
 
                 \\pagestyle{fancy}
                 \\setlength\\parindent{0in}
@@ -101,6 +102,11 @@ function research_note(str::String)
                 \\begin{document}
 
                 """
+    
+    # add lines to equations
+    main_text = replace(main_text, "\\begin{equation*}" => "\\begin{equation}")
+    main_text = replace(main_text, "\\end{equation*}" => "\\end{equation}")
+    
     return preamble * main_text * "\n\\end{document}"
 end
 
@@ -127,7 +133,7 @@ function todo_list(str::String)
     \\usepackage{multicol}
     
     \\usepackage{enumitem}
-    \\setlist[itemize]{before=\\vspace{-1\\baselineskip}, after=\\vspace{-1\\baselineskip}}
+    \\setlist[itemize]{topsep=0pt, partopsep=0pt, parsep=0pt, label=\$\\square\$}
     
     \\renewcommand{\\familydefault}{\\sfdefault}
     \\renewcommand{\\headrulewidth}{0pt}
@@ -153,8 +159,64 @@ function todo_list(str::String)
     main_text = replace(main_text, "\\par\\bigskip\\noindent\\hrulefill\\par\\bigskip"
                                     =>"\n\\vfill\\null\\columnbreak")
 
-    # make check boxes    
-    main_text = replace(main_text, "\\item" => "\\item[\$\\square\$]")
+
+    return preamble * main_text * "\n\\end{multicols*}\n\\end{document}"
+end
+
+"""
+    recipe(str::String)
+
+Add a LaTeX preamble to `str` appropriate for a recipe.
+
+Notes:
+* prints to a half-sheet (8.5" x 5.5")
+* converts x/y to \\nicefrac{x}{y}
+* assumes only a single H1 header in the input Markdown file of the format 
+  "# Title: subtitle"
+"""
+function recipe(str::String)
+    title, subtitle, main_text = extract_title_subtitle(str)
+
+    preamble = """
+    \\documentclass{article}
+    \\usepackage[paperwidth=8.5in,paperheight=5.5in,hmargin=2cm,top=1cm,bottom=3cm]{geometry}
+
+    \\usepackage{fancyhdr}
+    \\usepackage{amssymb}
+    \\usepackage{setspace}
+    \\usepackage{multicol}
+    \\usepackage{units}
+
+    \\usepackage{enumitem}
+    \\setlist[itemize]{topsep=0pt, partopsep=0pt, itemsep=4pt, parsep=0pt}
+
+    \\renewcommand{\\familydefault}{\\sfdefault}
+    \\setlength\\parindent{0in}
+    \\setlength\\parskip{10pt}
+    \\setlength{\\columnsep}{3em}
+
+    \\fancypagestyle{fancy}{
+    \\renewcommand{\\headrulewidth}{0pt}
+    \\setlength\\headheight{50pt}
+    \\lhead{{\\Huge \\textbf{$title}} \\quad{\\LARGE $subtitle}}
+    }
+    \\pagestyle{plain}
+    \\pagenumbering{gobble}
+
+    \\begin{document}
+    \\thispagestyle{fancy}
+    \\begin{multicols*}{2}
+    """
+
+    # remove numbers from (sub)sections
+    main_text = replace(main_text, "section{"=>"section*{")
+
+    # replace "x/y" with "\nicefrac{x}{y}" when x and y are both numbers
+    main_text = replace(main_text, r"(\d+)/(\d+)" => s"\\nicefrac{\1}{\2}")
+
+    # turn \hbars into new columns
+    main_text = replace(main_text, "\\par\\bigskip\\noindent\\hrulefill\\par\\bigskip"
+    =>"\n\\vfill\\null\\columnbreak")
 
     return preamble * main_text * "\n\\end{multicols*}\n\\end{document}"
 end

@@ -16,5 +16,5 @@ becomes
 ```
 """
 function add_captions_to_figures(str::String)
-    return replace(str, r"\\caption{}\n\\end{figure}\n\\textit{(.*)}\n" => s"\\caption{\1}\n\\end{figure}\n")
+    return replace(str, r"\\caption{}\n\\end{figure}\n\\textit{(.*)}" => s"\\caption{\1}\n\\end{figure}\n")
 end
