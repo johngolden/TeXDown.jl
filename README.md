@@ -55,6 +55,8 @@ If you use one shortcut frequently, you can add a keyboard shortcut to activate 
 * [Recipe](https://www.icloud.com/shortcuts/902037aa4bcf4e64aeae77fa2816222d)
 * [No Preamble](https://www.icloud.com/shortcuts/967334bb0872405db3c95d7124d03bce)
 
+
+**Print Recipe PDFs**
 The `recipe` template defaults to 8.5" x 5.5" PDFs (meant to be printed out and affixed to a 5x8 index card). The following script prepares these PDFs for printing on a standard 8.5" x 11" piece of paper. This can be done in three ways:
 
 1. Take two recipes which each fit on a single 8.5" x 5.5" page and combine them into a single 8.5" x 11" page.
@@ -63,7 +65,9 @@ The `recipe` template defaults to 8.5" x 5.5" PDFs (meant to be printed out and 
 
 In each case the resulting combined PDF is saved to the users Desktop under `print.pdf`.
 
-[Combine Recipe PDFs](https://www.icloud.com/shortcuts/eca3563e1407489eb119ddf4c6faa13b)
+These three options are all combined into a single shortcut:
+
+* [Combine Recipe PDFs](https://www.icloud.com/shortcuts/eca3563e1407489eb119ddf4c6faa13b)
 
 
 
