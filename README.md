@@ -14,6 +14,7 @@ TeXDown is really just a fairly lightweight wrapper for [CommonMark.jl](https://
 See the [examples](examples/) folder for more examples and technical descriptions of the capabilities.
 
 ## Usage
+TeXDown was designed to be predominantly used via Apple Shortcuts
 
 ```julia
 make_tex(md_content)
@@ -56,4 +57,4 @@ brew install --cask mactex-no-gui
 ```
 
 ### Optional: add shortcut
-You can download a simple shortcut for converting a todo list in Markdown directly to PDF [here](https://www.icloud.com/shortcuts/447956dcd2db44db861ba56869fb1631).
+You can download a simple shortcut for converting a todo list in Markdown directly to PDF [here](https://www.icloud.com/shortcuts/447956dcd2db44db861ba56869fb1631). Note that this shortcut assumes you are using Julia 1.9 and will need to be modified for different versions. 
