@@ -13,25 +13,6 @@ TeXDown is really just a fairly lightweight wrapper for [CommonMark.jl](https://
 
 See the [examples](examples/) folder for more examples and technical descriptions of the capabilities.
 
-## Usage
-TeXDown was designed to be predominantly used via Apple Shortcuts
-
-```julia
-make_tex(md_content)
-```
-Turn `md_content` -- either a Markdown file or string -- into LaTeX without a preamble.
-
-```julia
-make_tex(md_content, template)
-```
-Convert the contents of `md_content` into LaTeX with `template`. Currently accepted options for `template` are `research_note`, `todo_list`, and `recipe`.
-
-```julia
-make_pdf(md_content, template)
-```
-Convert the contents of `md_content` into a PDF with `template`, and deletes all LaTeX auxiliary files. 
-
-
 ## Installation
 These instructions are for macOS only. TeXDown should work on Windows but I haven't tested it. 
 
@@ -56,5 +37,50 @@ Once you have Homebrew installed, run
 brew install --cask mactex-no-gui
 ```
 
-### Optional: add shortcut
-You can download a simple shortcut for converting a todo list in Markdown directly to PDF [here](https://www.icloud.com/shortcuts/447956dcd2db44db861ba56869fb1631). Note that this shortcut assumes you are using Julia 1.9 and will need to be modified for different versions. 
+### Add shortcuts
+Note that most of these shortcuts assume you are using Julia 1.9 and will need to be modified for different versions.
+
+Once you've downloaded these shortcuts, they can be used by right-clicking a Markdown file and scrolling down to "Quick Actions". Then click "Customize" and select the TeXDown shortcuts you wish to add to the menu. Once they are added they will appear in the "Quick Actions" menu. The output of the shortcut will be saved in the same folder as the Markdown file you're converting.
+
+If you use one shortcut frequently, you can add a keyboard shortcut to activate it. For example, you could select a Markdown file and hit `ctrl-shift-P` to automatically create a todo list PDF. To add a keyboard shortcut, open the shortcut (by double-clicking it) in the Shortcuts app, then click the "ℹ︎" with a circle around it in the upper right corner of the window. Enter the desired keyboard shortcut in the "Run with:" box.
+
+**Markdown to PDF**
+* [Todo list](https://www.icloud.com/shortcuts/447956dcd2db44db861ba56869fb1631)
+* [Research note](https://www.icloud.com/shortcuts/45c416490ffd4f0eb9b099ae7919bd19)
+* [Recipe](https://www.icloud.com/shortcuts/24b1beeefbd84abbb282bb011a3db4a1)
+
+**Markdown to LaTeX**
+* [Todo list](https://www.icloud.com/shortcuts/4e39d211b3e5450898c92e9d96f2890d)
+* [Research note](https://www.icloud.com/shortcuts/d94943b28ee04d4daee6c2d6ca10088d)
+* [Recipe](https://www.icloud.com/shortcuts/902037aa4bcf4e64aeae77fa2816222d)
+* [No Preamble](https://www.icloud.com/shortcuts/967334bb0872405db3c95d7124d03bce)
+
+The `recipe` template defaults to 8.5" x 5.5" PDFs (meant to be printed out and affixed to a 5x8 index card). The following script prepares these PDFs for printing on a standard 8.5" x 11" piece of paper. This can be done in three ways:
+
+1. Take two recipes which each fit on a single 8.5" x 5.5" page and combine them into a single 8.5" x 11" page.
+2. Take one recipe which covers two 8.5" x 5.5" pages and combines them into a single 8.5" x 11" page.
+3. Take a single recipe which fits on a single 8.5" x 5.5" page and add whitespace so that it prints nicely on an 8.5" x 11" page.
+
+In each case the resulting combined PDF is saved to the users Desktop under `print.pdf`.
+
+[Combine Recipe PDFs](https://www.icloud.com/shortcuts/eca3563e1407489eb119ddf4c6faa13b)
+
+
+
+## Usage
+TeXDown was designed to be predominantly used via Apple Shortcuts, however it can of course be used in Julia itself. Here are the basic functions, see the documentation in [main.jl](src/main.jl) for slightly more information.
+
+```julia
+make_tex(md_content)
+```
+Turn `md_content` -- either a Markdown file or string -- into LaTeX without a preamble.
+
+```julia
+make_tex(md_content, template)
+```
+Convert the contents of `md_content` into LaTeX with `template`. Currently accepted options for `template` are `research_note`, `todo_list`, and `recipe`.
+
+```julia
+make_pdf(md_content, template)
+```
+Convert the contents of `md_content` into a PDF with `template`, and deletes all LaTeX auxiliary files. 
