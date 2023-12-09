@@ -131,15 +131,6 @@ function todo_list(str::String)
     \\usepackage{amssymb}
     \\usepackage{setspace}
     \\usepackage{multicol}
-
-    \\usepackage{everypage}
-    \\usepackage{tikz}
-
-    \\AddEverypageHook{
-    \\begin{tikzpicture}[remember picture,overlay]
-        \\draw (current page.north east) rectangle ++(-8in,-5in);
-    \\end{tikzpicture}
-    }
     
     \\usepackage{enumitem}
     \\setlist[itemize]{topsep=0pt, partopsep=0pt, parsep=0pt, label=\$\\square\$}
@@ -195,6 +186,15 @@ function recipe(str::String)
     \\usepackage{setspace}
     \\usepackage{multicol}
     \\usepackage{units}
+
+    \\usepackage{everypage}
+    \\usepackage{tikz}
+
+    \\AddEverypageHook{
+    \\begin{tikzpicture}[remember picture,overlay]
+        \\draw (current page.north east) rectangle ++(-8in,-5in);
+    \\end{tikzpicture}
+    }
 
     \\usepackage{enumitem}
     \\setlist[itemize]{topsep=0pt, partopsep=0pt, itemsep=4pt, parsep=0pt}
