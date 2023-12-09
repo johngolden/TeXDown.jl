@@ -89,6 +89,7 @@ function make_pdf(md_file, template)
     make_tex(md_file, template)
     filename, _ = splitext(md_file)
     run(`pdflatex $(filename).tex`)
+    run(`pdflatex $(filename).tex`)
     delete_aux_files(filename)
     run(`open $(filename).pdf`)
 end

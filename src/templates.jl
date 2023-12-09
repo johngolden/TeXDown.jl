@@ -186,15 +186,17 @@ function recipe(str::String)
     \\usepackage{setspace}
     \\usepackage{multicol}
     \\usepackage{units}
-
     \\usepackage{everypage}
     \\usepackage{tikz}
-
+    
     \\AddEverypageHook{
-    \\begin{tikzpicture}[remember picture,overlay]
-        \\draw (current page.north east) rectangle ++(-8in,-5in);
-    \\end{tikzpicture}
-    }
+        \\begin{tikzpicture}[remember picture, overlay]
+          \\draw
+          ([yshift=0.5in]current page.south west) -- ([yshift=0.5in]current page.south east);
+          \\draw
+          ([xshift=0.5in]current page.north west) -- ([xshift=0.5in]current page.south west);
+      \\end{tikzpicture}
+      }
 
     \\usepackage{enumitem}
     \\setlist[itemize]{topsep=0pt, partopsep=0pt, itemsep=4pt, parsep=0pt}
