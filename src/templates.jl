@@ -213,7 +213,8 @@ function recipe(str::String)
 
     # replace "x/y" with "\nicefrac{x}{y}" when x and y are both numbers
     main_text = replace(main_text, r"(\d+)/(\d+)" => s"\\nicefrac{\1}{\2}")
-
+    main_text = replace(main_text, r"(\d+)⁄(\d+)" => s"\\nicefrac{\1}{\2}")
+    
     # turn \hbars into new columns
     main_text = replace(main_text, "\\par\\bigskip\\noindent\\hrulefill\\par\\bigskip"
     =>"\n\\vfill\\null\\columnbreak")
