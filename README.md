@@ -1,6 +1,6 @@
 # TexDown.jl
 
-TeXDown converts simple Markdown files into LaTeX, with optional preambles designed for my common uses. This package solves two niche problems I have:
+TeXDown converts simple Markdown files into nice PDFs for printing via LaTeX. This package solves two niche problems I have:
 
 1. I would like to compile Markdown into LaTeX that is very similar to what I myself would have written. The common advice for converting Markdown to LaTeX is to use [Pandoc](https://pandoc.org), however, the LaTeX produced by this process is borderline unintelligible (even if it does compile to a reasonable looking PDF). This makes it difficult to make edits, or incorporate into a separate LaTeX file, or share with collaborators.
 2. I would like to be able to add a preamble, and ideally go directly from Markdown to PDF without having to muck around with LaTeX at all. This is useful for e.g. taking a simple todo list in Markdown and printing to PDF.
