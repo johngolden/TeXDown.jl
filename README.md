@@ -40,7 +40,7 @@ brew install --cask mactex-no-gui
 ### Add shortcuts
 Note that most of these shortcuts assume you are using Julia 1.9.x and will need to be modified for different versions.
 
-Once you've downloaded these shortcuts, they can be used by right-clicking a Markdown file and scrolling down to "Quick Actions". Then click "Customize" and select the TeXDown shortcuts you wish to add to the menu. Once they are added they will appear in the "Quick Actions" menu. The output of the shortcut will be saved in the same folder as the Markdown file you're converting.
+Once you've downloaded these shortcuts, they can be used by right-clicking a Markdown file and scrolling down to "Quick Actions". Then click "Customize" and select the TeXDown shortcuts you wish to add to the menu. Once they are added they will appear in the "Quick Actions" menu. The first time you run a shortcut you will likely need to grant permission for the shortcuts to run scripts, access files, etc. The output of the shortcut will be saved in the same folder as the Markdown file you're converting.
 
 If you use one shortcut frequently, you can add a keyboard shortcut to activate it. For example, you could select a Markdown file and hit `ctrl-shift-P` to automatically create a todo list PDF. To add a keyboard shortcut, open the shortcut (by double-clicking it) in the Shortcuts app, then click the "ℹ︎" with a circle around it in the upper right corner of the window. Enter the desired keyboard shortcut in the "Run with:" box.
 
