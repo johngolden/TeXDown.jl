@@ -1,10 +1,13 @@
 """
-    make_latex_base(md_content)
+    make_tex(md_content)
 
 Turn `md_content` -- either a Markdown file or string -- into LaTeX without a preamble.
 """
 function make_tex(md_content; save=false)
     if endswith(md_content, ".md")
+        if !isfile(md_content)
+            error("File not found: $md_content")
+        end
         md_str = open(md_content, "r") do contents
             read(contents, String)
         end
@@ -86,12 +89,33 @@ pdf, deleting the auxiliary files and opening the pdf after successful compilati
 The pdf is stored in the same location as `md_file`.
 """
 function make_pdf(md_file, template)
+    # Validate input
+    if !isfile(md_file)
+        error("File not found: $md_file")
+    end
+
     make_tex(md_file, template)
-    filename, _ = splitext(md_file)
-    run(`pdflatex $(filename).tex`)
-    run(`pdflatex $(filename).tex`)
-    delete_aux_files(filename)
-    run(`open $(filename).pdf`)
+
+    # Get absolute path and split into directory and filename
+    abs_path = abspath(md_file)
+    dir = dirname(abs_path)
+    filename, _ = splitext(basename(abs_path))
+    tex_file = filename * ".tex"
+    pdf_file = filename * ".pdf"
+
+    # Run pdflatex from the file's directory to handle paths with spaces
+    cd(dir) do
+        try
+            # Run twice for references, use nonstopmode to avoid hanging on errors
+            run(`pdflatex -interaction=nonstopmode $tex_file`)
+            run(`pdflatex -interaction=nonstopmode $tex_file`)
+        catch e
+            @warn "pdflatex failed: $e"
+            rethrow(e)
+        end
+        delete_aux_files(filename)
+        run(`open $pdf_file`)
+    end
 end
 
 """
@@ -101,8 +125,9 @@ Delete auxiliary `pdflatex` files.
 """
 function delete_aux_files(filename)
     for ext in ["log", "aux", "out", "tex"]
-        if isfile("$filename.$ext")
-            run(`rm $filename.$ext`)
+        filepath = "$filename.$ext"
+        if isfile(filepath)
+            rm(filepath)
         end
     end
 end
