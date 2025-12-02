@@ -12,6 +12,22 @@
 
 set -e
 
+# Find Julia executable
+JULIA=""
+if command -v julia &> /dev/null; then
+    JULIA="julia"
+elif [[ -x "$HOME/.juliaup/bin/julia" ]]; then
+    JULIA="$HOME/.juliaup/bin/julia"
+elif [[ -d "/Applications" ]]; then
+    # Find newest Julia.app
+    JULIA=$(find /Applications -name "julia" -path "*/Julia-*/bin/*" 2>/dev/null | sort -V | tail -1)
+fi
+
+if [[ -z "$JULIA" ]]; then
+    echo "Error: Julia not found. Install via juliaup or from julialang.org"
+    exit 1
+fi
+
 # Get the directory where this script lives
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -59,7 +75,7 @@ fi
 FILE="$(cd "$(dirname "$FILE")" && pwd)/$(basename "$FILE")"
 
 # Run Julia with TeXDown
-julia --project="$PROJECT_DIR" -e "
+"$JULIA" --project="$PROJECT_DIR" -e "
     using TeXDown
     make_${ACTION}(\"$FILE\", $TEMPLATE)
 "
