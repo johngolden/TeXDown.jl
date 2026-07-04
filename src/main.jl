@@ -83,16 +83,17 @@ function save_tex(md_content, tex_str)
 end
 
 """
-    make_pdf(md_file, template)
+    make_pdf(md_file, template; open=true)
 
 Convert the contents of `md_file` to a LaTeX file according to `template` and compile to
 pdf, deleting the auxiliary files and opening the pdf after successful compilation.
+Pass `open=false` to skip opening the pdf (e.g. for unattended/scripted use).
 
 The pdf is stored in the same location as `md_file`. `pdflatex` runs quietly; on
 failure the relevant error lines from the log are printed and the `.tex`/`.log` files
 are kept for inspection.
 """
-function make_pdf(md_file, template)
+function make_pdf(md_file, template; open::Bool=true)
     # Validate input
     if !isfile(md_file)
         error("File not found: $md_file")
@@ -123,7 +124,7 @@ function make_pdf(md_file, template)
         end
 
         delete_aux_files(filename)
-        run(`open $pdf_file`)
+        open && run(`open $pdf_file`)
     end
 end
 
