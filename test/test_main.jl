@@ -62,6 +62,27 @@ using TeXDown
             result = make_tex(input)
             @test contains(result, "includegraphics")
             @test contains(result, "width=0.8\\textwidth")
+
+            # Task checkboxes get converted
+            input = heredoc("""
+                - [ ] buy milk
+                - [x] call plumber
+                """)
+            result = make_tex(input)
+            @test contains(result, "\\item buy milk")
+            @test contains(result, "\\item[{\$\\boxtimes\$}] call plumber")
+            @test !contains(result, "[ ]")
+
+            # Dash lists split on blank lines just like star lists
+            input = heredoc("""
+                - a
+                - b
+
+                - c
+                """)
+            result = make_tex(input)
+            @test contains(result, "\\vspace{0.1cm}")
+            @test count("\\begin{itemize}", result) == 2
         end
 
         @testset "with template" begin

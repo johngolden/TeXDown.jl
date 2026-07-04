@@ -24,6 +24,7 @@ function make_tex(md_content; save=false)
 
     # fix CommonMark.jl bugs/shortcomings
     tex_str = fix_list_formatting(tex_str)
+    tex_str = fix_task_checkboxes(tex_str)
     tex_str = fix_figure_width(tex_str)
     tex_str = fix_quotation_marks(tex_str)
 
@@ -86,7 +87,9 @@ end
 Convert the contents of `md_file` to a LaTeX file according to `template` and compile to
 pdf, deleting the auxiliary files and opening the pdf after successful compilation.
 
-The pdf is stored in the same location as `md_file`.
+The pdf is stored in the same location as `md_file`. `pdflatex` runs quietly; on
+failure the relevant error lines from the log are printed and the `.tex`/`.log` files
+are kept for inspection.
 """
 function make_pdf(md_file, template)
     # Validate input
@@ -102,20 +105,58 @@ function make_pdf(md_file, template)
     filename, _ = splitext(basename(abs_path))
     tex_file = filename * ".tex"
     pdf_file = filename * ".pdf"
+    log_file = filename * ".log"
 
     # Run pdflatex from the file's directory to handle paths with spaces
     cd(dir) do
-        try
-            # Run twice for references, use nonstopmode to avoid hanging on errors
-            run(`pdflatex -interaction=nonstopmode $tex_file`)
-            run(`pdflatex -interaction=nonstopmode $tex_file`)
-        catch e
-            @warn "pdflatex failed: $e"
-            rethrow(e)
+        run_pdflatex(tex_file, log_file)
+
+        # a second pass is only needed when LaTeX asks for one (cross-references)
+        if isfile(log_file) && occursin("Rerun", read(log_file, String))
+            run_pdflatex(tex_file, log_file)
         end
+
+        if !isfile(pdf_file) || filesize(pdf_file) == 0
+            rm(pdf_file, force=true)
+            error("pdflatex produced no pages (empty document?); kept $tex_file for inspection.")
+        end
+
         delete_aux_files(filename)
         run(`open $pdf_file`)
     end
+end
+
+"""
+    run_pdflatex(tex_file, log_file)
+
+Run `pdflatex` quietly. On failure, print just the error lines from the log and throw,
+leaving the `.tex` and `.log` files in place for inspection.
+"""
+function run_pdflatex(tex_file, log_file)
+    cmd = `pdflatex -interaction=nonstopmode -file-line-error $tex_file`
+    try
+        run(pipeline(cmd, stdout=devnull, stderr=devnull))
+    catch
+        errors = latex_error_lines(log_file)
+        if !isempty(errors)
+            @error "pdflatex failed:\n" * join(errors, "\n")
+        end
+        error("pdflatex failed for $tex_file; kept $tex_file and $log_file for inspection.")
+    end
+end
+
+"""
+    latex_error_lines(log_file)
+
+Extract the error lines (`file:line: message`, `! message`, and `l.<n>` context)
+from a `pdflatex` log file.
+"""
+function latex_error_lines(log_file)
+    isfile(log_file) || return String[]
+    lines = readlines(log_file)
+    return [l for l in lines if startswith(l, "!") ||
+                                occursin(r"^\S*\.tex:\d+:", l) ||
+                                occursin(r"^l\.\d+", l)]
 end
 
 """

@@ -43,6 +43,10 @@ texdown tex "Notes.md"                  # LaTeX only
 
 Templates: `todo_list` (default), `research_note`, `recipe`
 
+In todo lists, any bullet marker (`*`, `-`, `+`) renders as an empty checkbox, and
+GitHub-style task syntax is supported: `- [x]` renders as a checked box. Links,
+images, tables, and code blocks compile out of the box.
+
 ### Apple Shortcuts
 
 Right-click a Markdown file → Quick Actions → select a TeXDown shortcut. First-time use requires granting permissions.

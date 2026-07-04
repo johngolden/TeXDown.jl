@@ -117,8 +117,11 @@ end
 Add a LaTeX preamble to `str` appropriate for a simple todo list.
 
 Notes:
-* assumes only a single H1 header in the input Markdown file of the format 
+* assumes only a single H1 header in the input Markdown file of the format
   "# Title: subtitle"
+* every bullet renders as an empty checkbox; GitHub-style `- [x]` items render as
+  a checked box
+* links, images, tables, and code blocks compile out of the box
 """
 function todo_list(str::String)
     title, subtitle, main_text = extract_title_subtitle(str)
@@ -131,10 +134,14 @@ function todo_list(str::String)
     \\usepackage{amssymb}
     \\usepackage{setspace}
     \\usepackage{multicol}
-    
+    \\usepackage{graphicx}
+    \\usepackage{listings}
+
     \\usepackage{enumitem}
     \\setlist[itemize]{topsep=0pt, partopsep=0pt, parsep=0pt, label=\$\\square\$}
-    
+
+    \\usepackage[hidelinks]{hyperref}
+
     \\renewcommand{\\familydefault}{\\sfdefault}
     \\renewcommand{\\headrulewidth}{0pt}
     
@@ -159,6 +166,10 @@ function todo_list(str::String)
     main_text = replace(main_text, "\\par\\bigskip\\noindent\\hrulefill\\par\\bigskip"
                                     =>"\n\\vfill\\null\\columnbreak")
 
+    # longtable cannot live inside multicols; use a plain tabular instead
+    main_text = replace(main_text, "\\begin{longtable}[]" => "\\begin{tabular}")
+    main_text = replace(main_text, "\\end{longtable}" => "\\end{tabular}")
+    main_text = replace(main_text, r"[ \t]*\\end(?:firsthead|head|foot|lastfoot)\n" => "")
 
     return preamble * main_text * "\n\\end{multicols*}\n\\end{document}"
 end

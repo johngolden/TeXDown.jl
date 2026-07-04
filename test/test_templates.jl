@@ -105,6 +105,16 @@ using TeXDown
             input = "\\section{Title}\n\\par\\bigskip\\noindent\\hrulefill\\par\\bigskip"
             result = TeXDown.todo_list(input)
             @test contains(result, "\\vfill\\null\\columnbreak")
+
+            # Converts longtable (incompatible with multicols) to tabular
+            input = "\\section{Title}\n\\begin{longtable}[]{@{}ll@{}}\n" *
+                    "\\hline\nitem & qty\\tabularnewline\n\\hline\n\\endfirsthead\n" *
+                    "milk & 2\\tabularnewline\n\\hline\n\\end{longtable}"
+            result = TeXDown.todo_list(input)
+            @test contains(result, "\\begin{tabular}{@{}ll@{}}")
+            @test contains(result, "\\end{tabular}")
+            @test !contains(result, "longtable")
+            @test !contains(result, "\\endfirsthead")
         end
     end
 

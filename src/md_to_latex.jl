@@ -15,6 +15,8 @@ Take blank lines in between list elements and force the creation of two separate
 
 By default, `CommonMark` removes blank lines and will combine lists.
 
+Works for all bullet markers (`*`, `-`, `+`).
+
 # Example
 ```
 * a
@@ -30,11 +32,14 @@ function add_empty_lines_to_lists(str::String)
 
     newline = "\n\n`\\vspace{0.1cm}`{=latex}\n\n"
 
+    # a top-level bullet item with non-empty content, using any CommonMark marker
+    is_bullet_item(line) = occursin(r"^[-*+] +\S", line)
+
     for i in 2:length(list)-1
         # Check if the current element is an empty string
         if list[i] == ""
             # Check if the previous element matches the specified patterns
-            if (startswith(list[i-1], "* ") && length(list[i-1]) > 2 && startswith(list[i+1], "* "))
+            if is_bullet_item(list[i-1]) && is_bullet_item(list[i+1])
                 # Replace the current empty string with newline
                 list[i] = newline
             end

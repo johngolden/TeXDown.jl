@@ -58,6 +58,42 @@ using TeXDown
             @test contains(result, "\\vspace{0.1cm}")
         end
 
+        @testset "bullet marker parity" begin
+            # Dash and plus markers get the same split treatment as stars
+            for marker in ["-", "+"]
+                input = heredoc("""
+                    $marker a
+                    $marker b
+
+                    $marker c
+                    $marker d
+                    """)
+                result = TeXDown.add_empty_lines_to_lists(input)
+                @test contains(result, "\\vspace{0.1cm}")
+            end
+
+            # Mixed markers across the blank line also split
+            input = heredoc("""
+                * a
+                * b
+
+                - c
+                - d
+                """)
+            result = TeXDown.add_empty_lines_to_lists(input)
+            @test contains(result, "\\vspace{0.1cm}")
+
+            # Checkbox items split too
+            input = heredoc("""
+                - [ ] a
+                - [x] b
+
+                - [ ] c
+                """)
+            result = TeXDown.add_empty_lines_to_lists(input)
+            @test contains(result, "\\vspace{0.1cm}")
+        end
+
         @testset "edge cases" begin
             # No blank lines - unchanged
             input = heredoc("""

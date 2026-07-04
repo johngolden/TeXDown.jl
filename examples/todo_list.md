@@ -5,6 +5,11 @@
 * todo
 * items
 
+## Checkboxes
+- [ ] dashes work as bullets too
+- [ ] and github-style checkboxes
+- [x] render like this when done
+
 ## Sublists
 * you can also
 * do sublists
