@@ -94,6 +94,29 @@ using TeXDown
             @test contains(result, "\\vspace{0.1cm}")
         end
 
+        @testset "multiple blank lines" begin
+            # Two blank lines add one extra line of space
+            input = "* a\n* b\n\n\n* c\n* d\n"
+            result = TeXDown.add_empty_lines_to_lists(input)
+            @test contains(result, "\\vspace{0.1cm}\\vspace{1\\baselineskip}")
+
+            # Three blank lines add two extra lines of space
+            input = "* a\n* b\n\n\n\n* c\n* d\n"
+            result = TeXDown.add_empty_lines_to_lists(input)
+            @test contains(result, "\\vspace{0.1cm}\\vspace{2\\baselineskip}")
+
+            # A single blank line keeps the original small gap
+            input = "* a\n\n* b\n"
+            result = TeXDown.add_empty_lines_to_lists(input)
+            @test contains(result, "\\vspace{0.1cm}")
+            @test !contains(result, "baselineskip")
+
+            # Blank runs not between bullet items are untouched
+            input = "some text\n\n\n* a\n* b\n"
+            result = TeXDown.add_empty_lines_to_lists(input)
+            @test !contains(result, "\\vspace")
+        end
+
         @testset "edge cases" begin
             # No blank lines - unchanged
             input = heredoc("""

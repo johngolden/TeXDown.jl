@@ -15,7 +15,8 @@ Take blank lines in between list elements and force the creation of two separate
 
 By default, `CommonMark` removes blank lines and will combine lists.
 
-Works for all bullet markers (`*`, `-`, `+`).
+Works for all bullet markers (`*`, `-`, `+`). A single blank line produces a small
+gap; each additional blank line adds a full line of space.
 
 # Example
 ```
@@ -28,24 +29,41 @@ Works for all bullet markers (`*`, `-`, `+`).
 will now render as two separate lists with a blank line between them.
 """
 function add_empty_lines_to_lists(str::String)
-    list = split(str, "\n")
-
-    newline = "\n\n`\\vspace{0.1cm}`{=latex}\n\n"
+    lines = split(str, "\n")
 
     # a top-level bullet item with non-empty content, using any CommonMark marker
     is_bullet_item(line) = occursin(r"^[-*+] +\S", line)
 
-    for i in 2:length(list)-1
-        # Check if the current element is an empty string
-        if list[i] == ""
-            # Check if the previous element matches the specified patterns
-            if is_bullet_item(list[i-1]) && is_bullet_item(list[i+1])
-                # Replace the current empty string with newline
-                list[i] = newline
+    # separator for a run of `k` blank lines: the first gives the usual small gap,
+    # each additional one adds a full line of space
+    function separator(k)
+        vspace = "\\vspace{0.1cm}"
+        if k > 1
+            vspace *= "\\vspace{$(k-1)\\baselineskip}"
+        end
+        return "\n\n`$(vspace)`{=latex}\n\n"
+    end
+
+    out = String[]
+    i = 1
+    n = length(lines)
+    while i <= n
+        # find runs of blank lines sandwiched between bullet items
+        if lines[i] == "" && i > 1 && is_bullet_item(lines[i-1])
+            j = i
+            while j <= n && lines[j] == ""
+                j += 1
+            end
+            if j <= n && is_bullet_item(lines[j])
+                push!(out, separator(j - i))
+                i = j
+                continue
             end
         end
+        push!(out, lines[i])
+        i += 1
     end
-    return join(list, "\n")
+    return join(out, "\n")
 end
 
 """

@@ -35,6 +35,11 @@
 * a single newline
 * like this
 
+
+
+* and more newlines
+* make bigger gaps
+
 You can also include non-list text like this.
 
 * and follow

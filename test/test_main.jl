@@ -83,6 +83,12 @@ using TeXDown
             result = make_tex(input)
             @test contains(result, "\\vspace{0.1cm}")
             @test count("\\begin{itemize}", result) == 2
+
+            # Extra blank lines become extra vertical space
+            input = "- a\n- b\n\n\n\n- c\n"
+            result = make_tex(input)
+            @test contains(result, "\\vspace{0.1cm}\\vspace{2\\baselineskip}")
+            @test count("\\begin{itemize}", result) == 2
         end
 
         @testset "with template" begin
