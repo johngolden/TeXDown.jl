@@ -16,8 +16,9 @@ function make_tex(md_content; save=false)
     end
 
     # format the markdown string before parsing to latex
+    # (count blank lines first, before equation formatting adds newlines of its own)
+    md_str = preserve_blank_lines(md_str)
     md_str = add_newlines_to_equations(md_str)
-    md_str = add_empty_lines_to_lists(md_str)
 
     # convert to latex
     tex_str = md_to_tex(md_str)

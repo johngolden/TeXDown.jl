@@ -44,7 +44,7 @@ using TeXDown
         end
     end
 
-    @testset "add_empty_lines_to_lists" begin
+    @testset "preserve_blank_lines" begin
         @testset "basic behavior" begin
             # Single blank line between list items creates visual break
             input = heredoc("""
@@ -54,7 +54,7 @@ using TeXDown
                 * c
                 * d
                 """)
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test contains(result, "\\vspace{0.1cm}")
         end
 
@@ -68,7 +68,7 @@ using TeXDown
                     $marker c
                     $marker d
                     """)
-                result = TeXDown.add_empty_lines_to_lists(input)
+                result = TeXDown.preserve_blank_lines(input)
                 @test contains(result, "\\vspace{0.1cm}")
             end
 
@@ -80,7 +80,7 @@ using TeXDown
                 - c
                 - d
                 """)
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test contains(result, "\\vspace{0.1cm}")
 
             # Checkbox items split too
@@ -90,31 +90,55 @@ using TeXDown
 
                 - [ ] c
                 """)
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test contains(result, "\\vspace{0.1cm}")
         end
 
         @testset "multiple blank lines" begin
             # Two blank lines add one extra line of space
             input = "* a\n* b\n\n\n* c\n* d\n"
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test contains(result, "\\vspace{0.1cm}\\vspace{1\\baselineskip}")
 
             # Three blank lines add two extra lines of space
             input = "* a\n* b\n\n\n\n* c\n* d\n"
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test contains(result, "\\vspace{0.1cm}\\vspace{2\\baselineskip}")
 
             # A single blank line keeps the original small gap
             input = "* a\n\n* b\n"
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test contains(result, "\\vspace{0.1cm}")
             @test !contains(result, "baselineskip")
 
-            # Blank runs not between bullet items are untouched
+            # Multiple blanks between a paragraph and a list also add space
             input = "some text\n\n\n* a\n* b\n"
-            result = TeXDown.add_empty_lines_to_lists(input)
-            @test !contains(result, "\\vspace")
+            result = TeXDown.preserve_blank_lines(input)
+            @test contains(result, "\\vspace{1\\baselineskip}")
+            @test !contains(result, "0.1cm")  # small gap is bullet-to-bullet only
+
+            # ... and between two paragraphs
+            input = "para one\n\n\n\npara two\n"
+            result = TeXDown.preserve_blank_lines(input)
+            @test contains(result, "\\vspace{2\\baselineskip}")
+        end
+
+        @testset "untouched regions" begin
+            # A single blank between non-bullet blocks stays a plain separator
+            input = "some text\n\npara two\n"
+            @test TeXDown.preserve_blank_lines(input) == input
+
+            # Blank runs inside fenced code blocks are untouched
+            input = "```\ncode\n\n\nmore code\n```\n"
+            @test TeXDown.preserve_blank_lines(input) == input
+
+            # Blank runs next to indented content are untouched
+            input = "* a\n  * a1\n\n\n  * a2\n"
+            @test TeXDown.preserve_blank_lines(input) == input
+
+            # Leading and trailing blank runs are untouched
+            input = "\n\n* a\n\n\n"
+            @test TeXDown.preserve_blank_lines(input) == input
         end
 
         @testset "edge cases" begin
@@ -124,15 +148,15 @@ using TeXDown
                 * b
                 * c
                 """)
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test !contains(result, "\\vspace")
 
             # Single item list - unchanged
             input = "* single item"
-            @test TeXDown.add_empty_lines_to_lists(input) == input
+            @test TeXDown.preserve_blank_lines(input) == input
 
             # Empty input
-            @test TeXDown.add_empty_lines_to_lists("") == ""
+            @test TeXDown.preserve_blank_lines("") == ""
 
             # Numbered list - does NOT add vspace (only works for bullet lists)
             input = heredoc("""
@@ -141,7 +165,7 @@ using TeXDown
 
                 3. c
                 """)
-            result = TeXDown.add_empty_lines_to_lists(input)
+            result = TeXDown.preserve_blank_lines(input)
             @test !contains(result, "\\vspace")
         end
     end

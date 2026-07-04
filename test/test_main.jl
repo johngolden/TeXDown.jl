@@ -89,6 +89,11 @@ using TeXDown
             result = make_tex(input)
             @test contains(result, "\\vspace{0.1cm}\\vspace{2\\baselineskip}")
             @test count("\\begin{itemize}", result) == 2
+
+            # Extra blank lines around non-list text also add space
+            input = "- a\n\n\ntext between\n\n\n- b\n"
+            result = make_tex(input)
+            @test count("\\vspace{1\\baselineskip}", result) == 2
         end
 
         @testset "with template" begin

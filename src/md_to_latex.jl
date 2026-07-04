@@ -9,14 +9,18 @@ function add_newlines_to_equations(str::String)
 end
 
 """
-    add_empty_lines_to_lists(str::String)
+    preserve_blank_lines(str::String)
 
-Take blank lines in between list elements and force the creation of two separate lists.
+Translate runs of blank lines in the Markdown into equivalent vertical space in the
+output, instead of letting `CommonMark` collapse them.
 
-By default, `CommonMark` removes blank lines and will combine lists.
-
-Works for all bullet markers (`*`, `-`, `+`). A single blank line produces a small
-gap; each additional blank line adds a full line of space.
+Rules:
+* a single blank line between bullet items (`*`, `-`, or `+`) splits them into two
+  lists separated by a small gap
+* each blank line beyond the first, between any two top-level blocks, adds a full
+  line of space
+* blank lines inside fenced code blocks, at the start or end of the file, or next
+  to indented content are left untouched
 
 # Example
 ```
@@ -28,16 +32,18 @@ gap; each additional blank line adds a full line of space.
 ```
 will now render as two separate lists with a blank line between them.
 """
-function add_empty_lines_to_lists(str::String)
+function preserve_blank_lines(str::String)
     lines = split(str, "\n")
 
     # a top-level bullet item with non-empty content, using any CommonMark marker
     is_bullet_item(line) = occursin(r"^[-*+] +\S", line)
+    is_fence(line) = occursin(r"^(```|~~~)", line)
+    is_top_level(line) = occursin(r"^\S", line)
 
-    # separator for a run of `k` blank lines: the first gives the usual small gap,
-    # each additional one adds a full line of space
-    function separator(k)
-        vspace = "\\vspace{0.1cm}"
+    # separator for a run of `k` blank lines: bullet items get the usual small gap,
+    # and each blank line beyond the first adds a full line of space
+    function separator(k, between_bullets)
+        vspace = between_bullets ? "\\vspace{0.1cm}" : ""
         if k > 1
             vspace *= "\\vspace{$(k-1)\\baselineskip}"
         end
@@ -47,21 +53,41 @@ function add_empty_lines_to_lists(str::String)
     out = String[]
     i = 1
     n = length(lines)
+    in_code_fence = false
     while i <= n
-        # find runs of blank lines sandwiched between bullet items
-        if lines[i] == "" && i > 1 && is_bullet_item(lines[i-1])
-            j = i
-            while j <= n && lines[j] == ""
-                j += 1
-            end
-            if j <= n && is_bullet_item(lines[j])
-                push!(out, separator(j - i))
+        line = lines[i]
+        if is_fence(line)
+            in_code_fence = !in_code_fence
+        end
+        if in_code_fence || line != "" || i == 1
+            push!(out, line)
+            i += 1
+            continue
+        end
+
+        # at the start of a blank-line run; find where it ends
+        j = i
+        while j <= n && lines[j] == ""
+            j += 1
+        end
+        k = j - i
+
+        prev = lines[i-1]
+        next = j <= n ? lines[j] : nothing
+        if next !== nothing && is_top_level(prev) && is_top_level(next)
+            between_bullets = is_bullet_item(prev) && is_bullet_item(next)
+            if between_bullets || k > 1
+                push!(out, separator(k, between_bullets))
                 i = j
                 continue
             end
         end
-        push!(out, lines[i])
-        i += 1
+
+        # leave the run untouched
+        for _ in 1:k
+            push!(out, "")
+        end
+        i = j
     end
     return join(out, "\n")
 end

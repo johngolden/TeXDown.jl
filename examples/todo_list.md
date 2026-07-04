@@ -40,7 +40,9 @@
 * and more newlines
 * make bigger gaps
 
-You can also include non-list text like this.
+
+You can also include non-list text like this, with blank lines around it.
+
 
 * and follow
 * it up with
